@@ -2,23 +2,40 @@
 
 public partial class MainPage : ContentPage
 {
-	int count = 0;
+    string translatedNumber;
 
-	public MainPage()
+    public MainPage()
 	{
 		InitializeComponent();
 	}
 
-	private void OnCounterClicked(object sender, EventArgs e)
+	private void OnTranslate(object sender, EventArgs e)
 	{
-		count++;
+		string enteredNumber = PhoneNumberText.Text;
+		translatedNumber = Core.PhonewordTranslator.ToNumber(enteredNumber);
 
-		if (count == 1)
-			CounterBtn.Text = $"Clicked {count} time";
-		else
-			CounterBtn.Text = $"Clicked {count} times";
+        if (!string.IsNullOrEmpty(translatedNumber))
+        {
+            CallButton.IsEnabled = true;
+            CallButton.Text = "Call " + translatedNumber;
+        }
+        else
+        {
+            CallButton.IsEnabled = false;
+            CallButton.Text = "Call";
+        }
+    }
 
-		SemanticScreenReader.Announce(CounterBtn.Text);
-	}
+    async void OnCall(object sender, System.EventArgs e)
+    {
+        if (await this.DisplayAlert(
+            "Dial a Number",
+            "Would you like to call " + translatedNumber + "?",
+            "Yes",
+            "No"))
+        {
+            // TODO: dial the phone
+        }
+    }
 }
 
